@@ -9,3 +9,4 @@ nb_conda
 jupyter
 ipympl
 jupyterlab
+plotly

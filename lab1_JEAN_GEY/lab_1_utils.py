@@ -3,7 +3,7 @@ import scipy
 import plotly.express as px
 import pandas as pd
 
-class exercice_1_workflow():
+class exercise_1_workflow():
     def __init__(self, K:int):
         """of K = 30 particles (labeled from 1 to K) evolving in a closed box. 
         The box is divided into two compartments in contact with each other, respectively identified by an index, 0 and 1. 
@@ -51,6 +51,25 @@ class exercice_1_workflow():
 
             if X[i]==0 and self.T is None:
                 self.T = i
+        self.fig = px.line(pd.DataFrame({"step":[i for i in range(n_max)], "Number of particles in box 0" : X}), x='step', y='Number of particles in box 0',
+                            title="Evolution of the number of particles in box 0")
+        if show:
+            self.fig.show()
+
+
+
+class exercise_2_worflow():
+    def __init__(self):
+        self.mu_init = np.array([0,1,0])
+        self.P = np.array([[0.2,0.7,0.1],
+                            [0.9, 0, 0.1],
+                            [0.2, 0.8, 0]])
+    
+    def simulate_dthmc(self,n_max,  rng_seed=np.random.default_rng(420), show=True):
+        X = np.array((n_max), dtype= 'int')
+        X[0] = np.argmax(self.mu_init)
+        for i in range(1, n_max):
+            X[i] = rng_seed.choice([0,1,2], p = self.P[:, X[i-1]])
         self.fig = px.line(pd.DataFrame({"step":[i for i in range(n_max)], "Number of particles in box 0" : X}), x='step', y='Number of particles in box 0',
                             title="Evolution of the number of particles in box 0")
         if show:
