@@ -1,0 +1,11 @@
+numpy
+scipy
+matplotlib
+multiprocess
+Ffmpeg
+numba
+h5py
+nb_conda
+jupyter
+ipympl
+jupyterlab
