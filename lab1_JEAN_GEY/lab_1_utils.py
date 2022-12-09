@@ -1,5 +1,6 @@
 import numpy as np
 import scipy
+from scipy import stats
 import plotly.express as px
 import pandas as pd
 
@@ -25,7 +26,7 @@ class exercise_1_workflow():
             P[i,i-1] = i/self.K
         self.P = P
 
-    def check_invariant_distribution(self, distribution: scipy.stats._distn_infrastructure.rv_frozen)->bool:
+    def check_invariant_distribution(self, distribution: stats._distn_infrastructure.rv_frozen)->bool:
         """Check if the distribution is invariant for our problem.
 
         Args:
@@ -66,11 +67,42 @@ class exercise_2_worflow():
                             [0.2, 0.8, 0]])
     
     def simulate_dthmc(self,n_max,  rng_seed=np.random.default_rng(420), show=True):
-        X = np.array((n_max), dtype= 'int')
+        X = np.zeros((n_max), dtype= 'int')
         X[0] = np.argmax(self.mu_init)
         for i in range(1, n_max):
-            X[i] = rng_seed.choice([0,1,2], p = self.P[:, X[i-1]])
-        self.fig = px.line(pd.DataFrame({"step":[i for i in range(n_max)], "Number of particles in box 0" : X}), x='step', y='Number of particles in box 0',
-                            title="Evolution of the number of particles in box 0")
+            X[i] = rng_seed.choice([0,1,2], p = self.P[X[i-1], :])
+        self.fig = px.histogram(pd.DataFrame({"step":[i for i in range(n_max)], "État" : X}), x='État',
+                            title="Histogramme des états visités (normalisé) dfezf", histnorm='probability')
         if show:
             self.fig.show()
+
+
+    def compute_invariant_distribution(self):
+        valP, vecP = np.linalg.eig(self.P.T)
+        idx = np.where(np.abs(valP-np.full(valP.shape, fill_value=1.))<=1e-9)[0]
+        self.normalized_vector = None
+        if len(idx)>1:
+            print("La distribution invariante n'est pas unique.")
+        elif len(idx)==1:
+            print("La distribution invariante est unique.")
+        else:
+            print("Il n'y a pas de distribution invariante.")
+
+        if len(idx)>0:
+            self.normalized_vector = np.real(vecP[:,idx[0]] / np.sum(vecP[:,idx[0]]))
+            print(f"La distribution invariante est : {self.normalized_vector}")
+
+
+    def compute_probability_distribuction(self, n_max:int):
+        mu_history = np.zeros((n_max, self.mu_init.shape[0]), dtype='float')
+        mu_history[0] = self.mu_init
+        for i in range(1, n_max):
+            mu_history[i] = mu_history[i-1] @self.P
+        self.mu_history =  mu_history
+
+    def check_invariant_distribution(self):
+        equality_check = np.count_nonzero(np.abs(self.mu_history[-1] - self.normalized_vector) < np.full(shape=self.normalized_vector.shape, fill_value=1e-9)) == self.normalized_vector.shape[0]
+        if equality_check:
+            print(f"La distribution de X(n) tend vers la distribution invariante obtenue à la question 5 : {self.normalized_vector}")
+        else:
+            print(f"La distribution de X(n) ne tend pas vers la distribution invariante obtenue à la question 5 : {self.normalized_vector}")
