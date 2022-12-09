@@ -106,3 +106,44 @@ class exercise_2_worflow():
             print(f"La distribution de X(n) tend vers la distribution invariante obtenue à la question 5 : {self.normalized_vector}")
         else:
             print(f"La distribution de X(n) ne tend pas vers la distribution invariante obtenue à la question 5 : {self.normalized_vector}")
+            
+    def plot_mu_evolution(self):
+        fig = px.line(pd.DataFrame(self.mu_history, columns=['Distribution en 0', 'Distribution en 1', 'Distribution en 2']),
+                      title='Evolution des composantes de la distribution')
+        fig.show()
+        
+    def plot_norm_difference(self):
+        pi_history = np.tile(self.normalized_vector, (self.mu_history.shape[0],1))
+        norm_history = np.linalg.norm(self.mu_history - pi_history,ord=1,axis=1)
+        fig = px.line(pd.DataFrame(norm_history, columns=['||mu-pi||']), title = "Évolution de la différence en la distibution et pi en fonction des steps")
+        fig.show()
+        
+    def theorical_return_time(self):
+        
+        theorical_return_time = 1/self.normalized_vector
+        print(f"Moyenne du temps de retour en 0 : {round(theorical_return_time[0],2)}")
+        print(f"Moyenne du temps de retour en 1 : {round(theorical_return_time[1],2)}")
+        print(f"Moyenne du temps de retour en 2 : {round(theorical_return_time[2],2)}")
+        
+        
+        
+
+    def empirical_average_return_time(self, rng_seed=np.random.default_rng(420), n_trajectories = 100):
+        empirical_return_time = np.zeros((3), dtype='float')
+        for i in range(3):
+            return_time = 0
+            for _ in range(n_trajectories):
+                step = 0
+                return_bool = False
+                X = i
+                while not return_bool:
+                    step +=1
+                    X = rng_seed.choice([0,1,2], p = self.P[X, :])
+                    return_bool = X == i
+                return_time += step
+            empirical_return_time[i] = return_time / n_trajectories
+        print(f"Moyenne du temps de retour en 0 : {round(empirical_return_time[0],2)}")
+        print(f"Moyenne du temps de retour en 1 : {round(empirical_return_time[1],2)}")
+        print(f"Moyenne du temps de retour en 2 : {round(empirical_return_time[2],2)}")
+        
+    
