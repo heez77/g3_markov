@@ -171,7 +171,12 @@ class exercise_2_workflow():
         valP, vecP = np.linalg.eig(self.P.T)
         idx = np.where(np.abs(valP-np.full(valP.shape, fill_value=1.))<=1e-9)[0]
         self.normalized_vector = None
-        if len(idx)>0:
+        if len(idx)>1:
+            print(f"La distribution invariante n'est pas unique, il y en a : {len(idx)}")
+            self.normalized_vector = np.real(vecP[:,idx[0]] / np.sum(vecP[:,idx[0]]))
+            print(f"La distribution invariante choisie est : {self.normalized_vector}")
+        elif len(idx)==1:
+            print(f"La distribution invariante est unique.")
             self.normalized_vector = np.real(vecP[:,idx[0]] / np.sum(vecP[:,idx[0]]))
             print(f"La distribution invariante est : {self.normalized_vector}")
         else:

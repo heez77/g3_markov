@@ -4,9 +4,9 @@ import numpy as np
 
 
 
-class Test_Exercise_1(unittest.TestCase):
-    def __init__(self):
-        super().__init__(self)
+class Test_Exercise_2(unittest.TestCase):
+    def __init__(self, name):
+        unittest.TestCase.__init__(self, name)
         self.rng_seed = np.random.default_rng(420)
         self.mu_init = np.zeros(3)
         self.mu_init[self.rng_seed.integers(0,3)] = 1
@@ -17,5 +17,5 @@ class Test_Exercise_1(unittest.TestCase):
         self.assertTrue(False not in (np.abs(self.workflow.normalized_vector @ self.workflow.P - self.workflow.normalized_vector)<= np.full(self.workflow.normalized_vector.shape[0], 1e-9)))
         
     
-    def test_compute_invariant_distribution_invariant(self):
+    def test_compute_invariant_distribution_normalized(self):
         self.assertTrue(np.abs(np.linalg.norm(self.workflow.normalized_vector, 1) - 1 ) <= 1e-9)
