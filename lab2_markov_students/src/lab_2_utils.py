@@ -132,7 +132,7 @@ class exercise_1_workflow():
         for i in range(self.K+1):
             pi[i] = ((1- self.rho_mm1K)* self.rho_mm1K**i) / (1-self.rho_mm1K**(self.K+1))
 
-        counts, bins, _ = plt.hist(self.X_mm1K[:-1], range(self.K+2), density = True, weights=np.diff(self.T_mm1K))
+        counts, bins, _ = plt.hist(self.X_mm1K[:-1], range(self.K+2), density = True, weights=np.diff(self.T_mm1K), label = 'Empirical histogram')
         plt.bar([i +0.5 for i in range(self.K+1)], pi,alpha = 0.3, label = 'invariant distrib', color='r')
         plt.title("")
         plt.legend()
